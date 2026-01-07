@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur Malus Automobile 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #1a1a1a;
+            padding: 20px;
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #2d2d2d;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .form-section {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #b0b0b0;
+            font-size: 14px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #404040;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .btn-calculate {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .results {
+            display: none;
+            padding: 30px;
+            background: #1a1a1a;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .results-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #ffffff;
+        }
+
+        .info-section {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #3b82f6;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #404040;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #b0b0b0;
+            font-size: 14px;
+        }
+
+        .info-value {
+            color: #ffffff;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .malus-section {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .malus-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #404040;
+            align-items: center;
+        }
+
+        .malus-row:last-child {
+            border-bottom: none;
+        }
+
+        .malus-label {
+            color: #b0b0b0;
+            font-size: 14px;
+        }
+
+        .malus-value {
+            color: #ef4444;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .malus-row.highlight {
+            background: rgba(59, 130, 246, 0.1);
+            padding: 15px;
+            margin: 10px -20px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .malus-row.highlight .malus-label {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .decote-section {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #10b981;
+        }
+
+        .decote-section .section-title {
+            color: #10b981;
+        }
+
+        .carte-grise-section {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #8b5cf6;
+        }
+
+        .carte-grise-section .section-title {
+            color: #8b5cf6;
+        }
+
+        .total-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .total-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .total-value {
+            font-size: 42px;
+            font-weight: 700;
+        }
+
+        .optional-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #404040;
+        }
+
+        .optional-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #b0b0b0;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .form-section, .results {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .total-value {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 Simulateur Malus Automobile 2026</h1>
+            <p>Calculez le malus écologique, le malus au poids et le coût de votre carte grise</p>
+        </div>
+
+        <div class="form-section">
+            <form id="malusForm">
+                <div class="form-group">
+                    <label for="energie">Type d'énergie *</label>
+                    <select id="energie" required>
+                        <option value="">Sélectionnez une énergie</option>
+                        <option value="essence">Essence</option>
+                        <option value="diesel">Diesel</option>
+                        <option value="hybride_rechargeable">Hybride rechargeable</option>
+                        <option value="hybride">Hybride non rechargeable</option>
+                        <option value="electrique">Électrique</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="dateCirculation">Date de 1ère mise en circulation *</label>
+                    <input type="date" id="dateCirculation" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="co2">Émissions de CO2 (g/km) *</label>
+                    <input type="number" id="co2" min="0" max="500" placeholder="Ex: 120" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="poids">Poids du véhicule (kg) *</label>
+                    <input type="number" id="poids" min="500" max="5000" placeholder="Ex: 1600" required>
+                </div>
+
+                <div class="optional-section">
+                    <div class="optional-title">Informations optionnelles (pour le calcul de la carte grise)</div>
+                    
+                    <div class="form-group">
+                        <label for="chevaux">Puissance fiscale (CV)</label>
+                        <input type="number" id="chevaux" min="1" max="50" placeholder="Ex: 7">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="departement">Département</label>
+                        <select id="departement">
+                            <option value="">Sélectionnez un département</option>
+                            <option value="41.90">01 - Ain (41,90 €)</option>
+                            <option value="51.20">02 - Aisne (51,20 €)</option>
+                            <option value="46.15">03 - Allier (46,15 €)</option>
+                            <option value="55.00">04 - Alpes-de-Haute-Provence (55,00 €)</option>
+                            <option value="56.00">05 - Hautes-Alpes (56,00 €)</option>
+                            <option value="51.80">06 - Alpes-Maritimes (51,80 €)</option>
+                            <option value="51.80">07 - Ardèche (51,80 €)</option>
+                            <option value="47.00">08 - Ardennes (47,00 €)</option>
+                            <option value="51.00">09 - Ariège (51,00 €)</option>
+                            <option value="48.60">10 - Aube (48,60 €)</option>
+                            <option value="47.00">11 - Aude (47,00 €)</option>
+                            <option value="56.70">12 - Aveyron (56,70 €)</option>
+                            <option value="55.00">13 - Bouches-du-Rhône (55,00 €)</option>
+                            <option value="49.00">14 - Calvados (49,00 €)</option>
+                            <option value="47.80">15 - Cantal (47,80 €)</option>
+                            <option value="46.15">16 - Charente (46,15 €)</option>
+                            <option value="51.00">17 - Charente-Maritime (51,00 €)</option>
+                            <option value="51.00">18 - Cher (51,00 €)</option>
+                            <option value="53.00">69 - Rhône (53,00 €)</option>
+                            <option value="41.60">75 - Paris (41,60 €)</option>
+                            <option value="60.00">92 - Hauts-de-Seine (60,00 €)</option>
+                            <option value="51.80">93 - Seine-Saint-Denis (51,80 €)</option>
+                            <option value="46.15">94 - Val-de-Marne (46,15 €)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-calculate">Calculer le malus</button>
+            </form>
+        </div>
+
+        <div class="results" id="results">
+            <h2 class="results-title">Résultats du calcul</h2>
+
+            <!-- Informations du véhicule -->
+            <div class="info-section">
+                <div class="section-title">Informations du véhicule</div>
+                <div class="info-row">
+                    <span class="info-label">Type d'énergie</span>
+                    <span class="info-value" id="displayEnergie">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Date de mise en circulation</span>
+                    <span class="info-value" id="displayDate">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Émissions CO2</span>
+                    <span class="info-value" id="displayCO2">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Poids</span>
+                    <span class="info-value" id="displayPoids">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Âge du véhicule</span>
+                    <span class="info-value" id="displayAge">-</span>
+                </div>
+            </div>
+
+            <!-- Calcul du malus -->
+            <div class="malus-section">
+                <div class="section-title">Calcul du malus</div>
+                <div class="malus-row">
+                    <span class="malus-label">Malus CO2 de base</span>
+                    <span class="malus-value" id="malusCO2Base">0,00 €</span>
+                </div>
+                <div class="malus-row">
+                    <span class="malus-label">Malus poids de base</span>
+                    <span class="malus-value" id="malusPoidsBase">0,00 €</span>
+                </div>
+                <div class="malus-row" id="decoteRow">
+                    <span class="malus-label">Décote applicable</span>
+                    <span class="malus-value" id="decotePct">0%</span>
+                </div>
+                <div class="malus-row">
+                    <span class="malus-label">Malus CO2 après décote</span>
+                    <span class="malus-value" id="malusCO2Apres">0,00 €</span>
+                </div>
+                <div class="malus-row">
+                    <span class="malus-label">Malus poids après décote</span>
+                    <span class="malus-value" id="malusPoidsApres">0,00 €</span>
+                </div>
+                <div class="malus-row highlight">
+                    <span class="malus-label">Montant total du malus</span>
+                    <span class="malus-value" id="malusTotal">0,00 €</span>
+                </div>
+            </div>
+
+            <!-- Prochaine décote -->
+            <div class="decote-section" id="prochaineDecote" style="display: none;">
+                <div class="section-title">Prochaine décote</div>
+                <div class="info-row">
+                    <span class="info-label">Dans</span>
+                    <span class="info-value" id="decoteDans">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Nouveau taux de décote</span>
+                    <span class="info-value" id="nouveauTaux">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Futur montant total du malus</span>
+                    <span class="info-value" id="futurMalus" style="color: #10b981;">0,00 €</span>
+                </div>
+            </div>
+
+            <!-- Coût carte grise -->
+            <div class="carte-grise-section" id="carteGriseSection" style="display: none;">
+                <div class="section-title">Coût total de la carte grise</div>
+                <div class="info-row">
+                    <span class="info-label" id="taxeLabel">Taxe régionale</span>
+                    <span class="info-value" id="taxeRegionale">0,00 €</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Malus total</span>
+                    <span class="info-value" id="malusTotalCG">0,00 €</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Frais fixes (taxe + acheminement)</span>
+                    <span class="info-value">13,76 €</span>
+                </div>
+                <div class="malus-row highlight">
+                    <span class="malus-label">Coût total carte grise</span>
+                    <span class="malus-value" id="totalCarteGrise">0,00 €</span>
+                </div>
+            </div>
+
+            <!-- Total final -->
+            <div class="total-card">
+                <div class="total-label" id="totalLabel">Montant total du malus</div>
+                <div class="total-value" id="totalFinal">0,00 €</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Barème malus CO2 2026 (en euros)
+        const baremeMalusCO2_2026 = {
+            108: 50, 109: 75, 110: 100, 111: 125, 112: 150, 113: 170, 114: 190,
+            115: 210, 116: 230, 117: 240, 118: 260, 119: 280, 120: 310, 121: 330,
+            122: 360, 123: 400, 124: 450, 125: 540, 126: 650, 127: 740, 128: 818,
+            129: 898, 130: 983, 131: 1074, 132: 1172, 133: 1276, 134: 1386, 135: 1504,
+            136: 1629, 137: 1761, 138: 1901, 139: 2049, 140: 2205, 141: 2370, 142: 2544,
+            143: 2727, 144: 2918, 145: 3119, 146: 3329, 147: 3548, 148: 3777, 149: 4017,
+            150: 4500, 151: 5000, 152: 5500, 153: 6000, 154: 6500, 155: 7000, 156: 7500,
+            157: 8000, 158: 8500, 159: 9000, 160: 9500, 161: 10000, 162: 10500, 163: 11000,
+            164: 11500, 165: 12000, 166: 12500, 167: 13000, 168: 13500, 169: 14000, 170: 14500,
+            171: 15000, 172: 16000, 173: 17000, 174: 18000, 175: 19000, 176: 20000, 177: 21000,
+            178: 22000, 179: 23000, 180: 24000, 181: 25000, 182: 26000, 183: 27000, 184: 28000,
+            185: 29000, 186: 30000, 187: 31000, 188: 32000, 189: 33000, 190: 34000, 191: 35000,
+            192: 36000, 193: 37000, 194: 38000, 195: 39000, 196: 40000
+        };
+
+        function calculerMalusPoids(poids) {
+            if (poids < 1500) return 0;
+            
+            let malus = 0;
+            
+            if (poids >= 1500 && poids < 1700) {
+                malus = (poids - 1499) * 10;
+            } else if (poids >= 1700 && poids < 1800) {
+                malus = 200 * 10 + (poids - 1699) * 15;
+            } else if (poids >= 1800 && poids < 1900) {
+                malus = 200 * 10 + 100 * 15 + (poids - 1799) * 20;
+            } else if (poids >= 1900 && poids < 2000) {
+                malus = 200 * 10 + 100 * 15 + 100 * 20 + (poids - 1899) * 25;
+            } else if (poids >= 2000) {
+                malus = 200 * 10 + 100 * 15 + 100 * 20 + 100 * 25 + (poids - 1999) * 30;
+            }
+            
+            return Math.round(malus);
+        }
+
+        function calculerMalusCO2(co2, energie) {
+            if (energie === 'electrique') return 0;
+            if (co2 < 108) return 0;
+            if (co2 > 196) co2 = 196;
+            
+            if (baremeMalusCO2_2026[co2]) {
+                return baremeMalusCO2_2026[co2];
+            }
+            
+            for (let seuil in baremeMalusCO2_2026) {
+                if (co2 <= parseInt(seuil)) {
+                    return baremeMalusCO2_2026[seuil];
+                }
+            }
+            
+            return 40000;
+        }
+
+        function calculerDecote(ageEnMois) {
+            if (ageEnMois < 1) return 0;
+            if (ageEnMois >= 1 && ageEnMois <= 3) return 3;
+            if (ageEnMois >= 4 && ageEnMois <= 6) return 6;
+            if (ageEnMois >= 7 && ageEnMois <= 9) return 9;
+            if (ageEnMois >= 10 && ageEnMois <= 12) return 12;
+            if (ageEnMois >= 13 && ageEnMois <= 18) return 16;
+            if (ageEnMois >= 19 && ageEnMois <= 24) return 20;
+            if (ageEnMois >= 25 && ageEnMois <= 36) return 28;
+            if (ageEnMois >= 37 && ageEnMois <= 48) return 33;
+            if (ageEnMois >= 49 && ageEnMois <= 60) return 38;
+            if (ageEnMois >= 61 && ageEnMois <= 72) return 43;
+            if (ageEnMois >= 73 && ageEnMois <= 84) return 48;
+            if (ageEnMois >= 85 && ageEnMois <= 96) return 53;
+            if (ageEnMois >= 97 && ageEnMois <= 108) return 58;
+            if (ageEnMois >= 109 && ageEnMois <= 120) return 64;
+            if (ageEnMois >= 121 && ageEnMois <= 132) return 70;
+            if (ageEnMois >= 133 && ageEnMois <= 144) return 76;
+            if (ageEnMois >= 145 && ageEnMois <= 156) return 82;
+            if (ageEnMois >= 157 && ageEnMois <= 168) return 88;
+            if (ageEnMois >= 169 && ageEnMois <= 180) return 94;
+            return 100; // 15 ans et plus (181 mois et +)
+        }
+
+        function calculerProchaineDecote(ageEnMois) {
+            const paliers = [
+                { seuil: 1, taux: 3 },
+                { seuil: 4, taux: 6 },
+                { seuil: 7, taux: 9 },
+                { seuil: 10, taux: 12 },
+                { seuil: 13, taux: 16 },
+                { seuil: 19, taux: 20 },
+                { seuil: 25, taux: 28 },
+                { seuil: 37, taux: 33 },
+                { seuil: 49, taux: 38 },
+                { seuil: 61, taux: 43 },
+                { seuil: 73, taux: 48 },
+                { seuil: 85, taux: 53 },
+                { seuil: 97, taux: 58 },
+                { seuil: 109, taux: 64 },
+                { seuil: 121, taux: 70 },
+                { seuil: 133, taux: 76 },
+                { seuil: 145, taux: 82 },
+                { seuil: 157, taux: 88 },
+                { seuil: 169, taux: 94 },
+                { seuil: 181, taux: 100 }
+            ];
+            
+            for (let palier of paliers) {
+                if (ageEnMois < palier.seuil) {
+                    return {
+                        dans: palier.seuil - ageEnMois,
+                        ageTotal: palier.seuil,
+                        nouveauTaux: palier.taux
+                    };
+                }
+            }
+            
+            return null;
+        }
+
+        document.getElementById('malusForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const energie = document.getElementById('energie').value;
+            const dateCirculation = document.getElementById('dateCirculation').value;
+            const co2 = parseInt(document.getElementById('co2').value);
+            const poids = parseInt(document.getElementById('poids').value);
+            const chevaux = parseInt(document.getElementById('chevaux').value) || 0;
+            const departement = parseFloat(document.getElementById('departement').value) || 0;
+            
+            // Calcul de l'âge du véhicule
+            const dateVehicule = new Date(dateCirculation);
+            const dateActuelle = new Date('2026-01-07');
+            const diffTime = dateActuelle - dateVehicule;
+            const ageEnMois = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 30.44));
+            const ageEnAnnees = Math.floor(ageEnMois / 12);
+            const moisRestants = ageEnMois % 12;
+            
+            // Calcul malus de base
+            const malusCO2Base = calculerMalusCO2(co2, energie);
+            const malusPoidsBase = energie !== 'electrique' ? calculerMalusPoids(poids) : 0;
+            
+            // Calcul décote
+            const tauxDecote = calculerDecote(ageEnMois);
+            const malusCO2Apres = Math.round(malusCO2Base * (1 - tauxDecote / 100));
+            const malusPoidsApres = Math.round(malusPoidsBase * (1 - tauxDecote / 100));
+            const malusTotal = malusCO2Apres + malusPoidsApres;
+            
+            // Prochaine décote
+            const prochaineDecote = calculerProchaineDecote(ageEnMois);
+            
+            // Calcul futur malus si prochaine décote existe
+            let futurMalus = 0;
+            if (prochaineDecote) {
+                const futurCO2 = Math.round(malusCO2Base * (1 - prochaineDecote.nouveauTaux / 100));
+                const futurPoids = Math.round(malusPoidsBase * (1 - prochaineDecote.nouveauTaux / 100));
+                futurMalus = futurCO2 + futurPoids;
+            }
+            
+            // Affichage des informations du véhicule
+            const energieLabels = {
+                'essence': 'Essence',
+                'diesel': 'Diesel',
+                'hybride_rechargeable': 'Hybride rechargeable',
+                'hybride': 'Hybride non rechargeable',
+                'electrique': 'Électrique'
+            };
+            
+            document.getElementById('displayEnergie').textContent = energieLabels[energie];
+            document.getElementById('displayDate').textContent = new Date(dateCirculation).toLocaleDateString('fr-FR');
+            document.getElementById('displayCO2').textContent = co2 + ' g/km';
+            document.getElementById('displayPoids').textContent = poids + ' kg';
+            
+            if (ageEnAnnees === 0) {
+                document.getElementById('displayAge').textContent = ageEnMois + ' mois';
+            } else {
+                document.getElementById('displayAge').textContent = ageEnMois + ' mois';
+            }
+            
+            // Affichage du calcul du malus
+            document.getElementById('malusCO2Base').textContent = malusCO2Base.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+            document.getElementById('malusPoidsBase').textContent = malusPoidsBase.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+            document.getElementById('decotePct').textContent = tauxDecote + '%';
+            document.getElementById('malusCO2Apres').textContent = malusCO2Apres.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+            document.getElementById('malusPoidsApres').textContent = malusPoidsApres.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+            document.getElementById('malusTotal').textContent = malusTotal.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+            
+            // Affichage décote si véhicule neuf (moins de 6 mois)
+            if (tauxDecote === 0) {
+                document.getElementById('decoteRow').style.display = 'none';
+            } else {
+                document.getElementById('decoteRow').style.display = 'flex';
+            }
+            
+            // Prochaine décote
+            if (prochaineDecote && tauxDecote < 100) {
+                document.getElementById('prochaineDecote').style.display = 'block';
+                
+                const dansMois = prochaineDecote.dans;
+                const dansTexte = dansMois === 1 ? '1 mois' : dansMois + ' mois';
+                const ageTotal = prochaineDecote.ageTotal;
+                const ageTotalTexte = ageTotal + ' mois';
+                
+                document.getElementById('decoteDans').textContent = dansTexte + ' (à ' + ageTotalTexte + ')';
+                document.getElementById('nouveauTaux').textContent = prochaineDecote.nouveauTaux + '%';
+                document.getElementById('futurMalus').textContent = futurMalus.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+            } else {
+                document.getElementById('prochaineDecote').style.display = 'none';
+            }
+            
+            // Calcul carte grise
+            if (chevaux > 0 && departement > 0) {
+                let taxeRegionale = chevaux * departement;
+                
+                // Réduction de 50% si véhicule de plus de 10 ans
+                const anneeVehicule = dateVehicule.getFullYear();
+                const age = 2026 - anneeVehicule;
+                
+                const taxeLabel = age > 10 
+                    ? `Taxe régionale (${chevaux} CV × ${departement.toFixed(2)} €/CV) - Réduction 50%`
+                    : `Taxe régionale (${chevaux} CV × ${departement.toFixed(2)} €/CV)`;
+                
+                if (age > 10) {
+                    taxeRegionale = taxeRegionale * 0.5;
+                }
+                
+                const fraisFixes = 13.76;
+                const totalCG = taxeRegionale + malusTotal + fraisFixes;
+                
+                document.getElementById('carteGriseSection').style.display = 'block';
+                document.getElementById('taxeLabel').textContent = taxeLabel;
+                document.getElementById('taxeRegionale').textContent = taxeRegionale.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+                document.getElementById('malusTotalCG').textContent = malusTotal.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+                document.getElementById('totalCarteGrise').textContent = totalCG.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+                
+                document.getElementById('totalLabel').textContent = 'Coût total carte grise';
+                document.getElementById('totalFinal').textContent = totalCG.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+            } else {
+                document.getElementById('carteGriseSection').style.display = 'none';
+                document.getElementById('totalLabel').textContent = 'Montant total du malus';
+                document.getElementById('totalFinal').textContent = malusTotal.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+            }
+            
+            // Afficher les résultats
+            document.getElementById('results').classList.add('show');
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+    </script>
+</body>
+</html>
