@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur - Estimer le coût d'un certificat d'immatriculation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: white;
+            border-bottom: 3px solid #000091;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo {
+            font-weight: bold;
+            font-size: 16px;
+            color: #000091;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #000091;
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        
+        .info-box {
+            background: #e3e3fd;
+            border-left: 4px solid #000091;
+            padding: 15px;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .step-number {
+            background: #000091;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        
+        .step-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #000091;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .help-text {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #000091;
+            box-shadow: 0 0 0 2px rgba(0,0,145,0.1);
+        }
+        
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .radio-option:hover {
+            border-color: #000091;
+            background: #f8f8ff;
+        }
+        
+        .radio-option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+        }
+        
+        .radio-option.selected {
+            border-color: #000091;
+            background: #e3e3fd;
+        }
+        
+        button {
+            background: #000091;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        button:hover {
+            background: #1212a8;
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn-secondary {
+            background: #666;
+        }
+        
+        .btn-secondary:hover {
+            background: #555;
+        }
+        
+        .result-box {
+            background: #e8f5e9;
+            border-left: 4px solid #2e7d32;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        
+        .result-box h2 {
+            color: #2e7d32;
+            font-size: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .result-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #c8e6c9;
+        }
+        
+        .result-detail:last-child {
+            border-bottom: none;
+        }
+        
+        .result-label {
+            font-weight: 500;
+        }
+        
+        .result-value {
+            font-weight: 600;
+            color: #2e7d32;
+        }
+        
+        .result-total {
+            background: #2e7d32;
+            color: white;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .required {
+            color: #d32f2f;
+        }
+        
+        select {
+            background-color: white;
+            cursor: pointer;
+        }
+        
+        .info-text {
+            font-size: 14px;
+            color: #666;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">République Française | Service Public</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Simulateur - Estimer le coût d'un certificat d'immatriculation (ou carte grise)</h1>
+        <p class="subtitle">Vérifié le 07 Janvier 2026 - Direction de l'information légale et administrative (Premier ministre)</p>
+        
+        <div class="info-box">
+            <strong>Pour réaliser la simulation</strong>, vous avez parfois besoin d'informations sur le véhicule dont certaines peuvent être sur la carte grise.<br><br>
+            Depuis le 1er janvier 2026, la taxe régionale est passée :<br>
+            • dans la région Provence-Alpes-Côte d'Azur, de 59 à 60€<br>
+            • dans la région Corse de 43 à 53€
+        </div>
+
+        <form id="simulatorForm">
+            <!-- ÉTAPE 1 -->
+            <div id="step1" class="section">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <h2 class="step-title">Votre démarche</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label>Quelle démarche souhaitez-vous effectuer ? <span class="required">*</span></label>
+                    <p class="help-text">Lorsque le certificat d'immatriculation est demandé pour plusieurs motifs, c'est le motif qui entraîne le coût le plus élevé qui est pris en compte.</p>
+                    <select id="demarche" required>
+                        <option value="">Sélectionnez votre démarche ou tapez un mot clé</option>
+                        <option value="premiere">Première immatriculation en France d'un véhicule</option>
+                        <option value="occasion">Immatriculation d'un véhicule d'occasion</option>
+                        <option value="adresse">Changement d'adresse</option>
+                        <option value="duplicata">Duplicata</option>
+                        <option value="lld">Achat par le locataire après LLD/LOA/crédit bail</option>
+                    </select>
+                </div>
+
+                <div id="typeVehiculeNeuf" class="form-group hidden">
+                    <label>Précisez si le véhicule a été <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="typeAchat" value="neuf">
+                            <span>Acheté neuf en France ou à l'étranger</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="typeAchat" value="importe">
+                            <span>Importé en France après avoir été immatriculé dans un autre pays</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ÉTAPE 2 -->
+            <div id="step2" class="section hidden">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <h2 class="step-title">Votre véhicule</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label>Quel est le type de votre véhicule ? <span class="required">*</span></label>
+                    <select id="typeVehicule" required>
+                        <option value="">Sélectionnez le genre de votre véhicule</option>
+                        <option value="VT">Véhicule de tourisme (VT ou M1) ex-Voiture particulière (VP)</option>
+                        <option value="CTTE">Camionnette, Utilitaire pour le transport de marchandises jusqu'à 3,5 tonnes (CTTE, N1)</option>
+                        <option value="MTL">Moto jusqu'à 125 cm3 (MTL, L3e, L4e)</option>
+                        <option value="MTT">Moto de plus de 125 cm3 (MTT1, MTT2, L3e, L4e)</option>
+                        <option value="QM">Quad et Quadricycle à moteur (QM, L6e, L7e)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Quelle est la date de première mise en circulation du véhicule ? <span class="required">*</span></label>
+                    <p class="help-text">L'ancienneté du véhicule se calcule à partir de la date de 1re mise en circulation</p>
+                    <input type="date" id="dateCirculation" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Quelle est la puissance administrative nationale en CV ? <span class="required">*</span></label>
+                    <p class="help-text">La puissance administrative nationale, appelée aussi puissance fiscale (en chevaux vapeur) est mentionnée à la rubrique «P.6» de la carte grise</p>
+                    <input type="number" id="puissance" min="1" max="50" required placeholder="Ex: 32">
+                </div>
+
+                <div class="form-group">
+                    <label>Quelle est la source d'énergie du véhicule ? <span class="required">*</span></label>
+                    <p class="help-text">Le type de carburant ou la source d'énergie utilisé par le véhicule est mentionné à la rubrique «P.3 » de la carte grise</p>
+                    <select id="energie" required>
+                        <option value="">Sélectionnez</option>
+                        <option value="EL">Électricité (EL), Hydrogène (H2) ou combinaison des 2 (HE, HH)</option>
+                        <option value="ES">Essence (ES)</option>
+                        <option value="GO">Gazole (GO), Biogazole B100 (BL)</option>
+                        <option value="EH">Essence/électricité - hybride non rechargeable (EH)</option>
+                        <option value="EE">Essence/électricité - hybride rechargeable (EE)</option>
+                        <option value="GP">GPL (GP)</option>
+                        <option value="FE">Superéthanol E85, E85-GPL, E85-GasNat (FE, FG, FN)</option>
+                        <option value="GN">Gaz naturel (GN)</option>
+                    </select>
+                </div>
+
+                <div id="questionInvalidite" class="form-group">
+                    <label>Le véhicule est accessible en fauteuil roulant ou vous disposez d'une carte «mobilité inclusion mention invalidité» ?</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="invalidite" value="oui">
+                            <span>Oui</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="invalidite" value="non" checked>
+                            <span>Non</span>
+                        </label>
+                    </div>
+                    <div class="info-text">
+                        <strong>Véhicule concerné</strong><br>
+                        Sont exonérés du malus écologique et de la taxe sur la masse en ordre de marche :<br>
+                        • le véhicule accessible en fauteuil roulant ou à carrosserie « Handicap »<br>
+                        • le titulaire d'une carte «mobilité inclusion mention invalidité» ou carte d'invalidité militaire<br>
+                        • le parent en charge effective d'un enfant titulaire d'une carte «mobilité inclusion mention invalidité» ou carte d'invalidité militaire
+                    </div>
+                </div>
+
+                <div id="questionReceptionCommunautaire" class="form-group">
+                    <label>Le véhicule a fait l'objet d'une réception communautaire ?</label>
+                    <p class="help-text">La rubrique «K» de la carte grise doit commencer par "e" pour une réception communautaire</p>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="receptionCommunautaire" value="oui" checked>
+                            <span>Oui</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="receptionCommunautaire" value="non">
+                            <span>Non</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Quel est le taux d'émission CO2 (V.7) en g/km du véhicule ? <span class="required">*</span></label>
+                    <p class="help-text">Le taux d'émission en CO² est mentionné à la rubrique «V.7 » de la carte grise</p>
+                    <input type="number" id="co2" min="0" required placeholder="Ex: 180">
+                </div>
+
+                <div class="form-group">
+                    <label>Quel est le poids du véhicule en kg ? <span class="required">*</span></label>
+                    <p class="help-text">Il s'agit de l'information « Masse du véhicule en service (en kg) » indiquée sur la carte grise à la rubrique G (et correspondant à G1 +75kg)</p>
+                    <input type="number" id="poids" min="500" max="5000" required placeholder="Ex: 1850">
+                </div>
+            </div>
+
+            <!-- ÉTAPE 3 -->
+            <div id="step3" class="section hidden">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <h2 class="step-title">Votre lieu de résidence</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label>Quel est votre département ? <span class="required">*</span></label>
+                    <select id="departement" required>
+                        <option value="">Sélectionnez votre département ou tapez un mot clé</option>
+                    </select>
+                </div>
+
+                <div class="warning-box hidden" id="infoRegion"></div>
+            </div>
+
+            <div class="button-group">
+                <button type="button" id="btnPrevious" class="btn-secondary hidden">Précédent</button>
+                <button type="button" id="btnNext">Suivant</button>
+                <button type="submit" id="btnCalculate" class="hidden">Calculer</button>
+            </div>
+        </form>
+
+        <div id="results" class="hidden result-box">
+            <h2>✔ Résultat</h2>
+            <div id="resultContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Données des départements
+        const tarifsCV = {
+            "01": { nom: "Ain", region: "Auvergne-Rhône-Alpes", tarif: 43 },
+            "02": { nom: "Aisne", region: "Hauts-de-France", tarif: 55 },
+            "03": { nom: "Allier", region: "Auvergne-Rhône-Alpes", tarif: 43 },
+            "04": { nom: "Alpes-de-Haute-Provence", region: "Provence-Alpes-Côte d'Azur", tarif: 60 },
+            "05": { nom: "Hautes-Alpes", region: "Provence-Alpes-Côte d'Azur", tarif: 60 },
+            "06": { nom: "Alpes-Maritimes", region: "Provence-Alpes-Côte d'Azur", tarif: 60 },
+            "07": { nom: "Ardèche", region: "Auvergne-Rhône-Alpes", tarif: 43 },
+            "08": { nom: "Ardennes", region: "Grand Est", tarif: 60 },
+            "09": { nom: "Ariège", region: "Occitanie", tarif: 54.50 },
+            "10": { nom: "Aube", region: "Grand Est", tarif: 60 },
+            "11": { nom: "Aude", region: "Occitanie", tarif: 54.50 },
+            "12": { nom: "Aveyron", region: "Occitanie", tarif: 54.50 },
+            "13": { nom: "Bouches-du-Rhône", region: "Provence-Alpes-Côte d'Azur", tarif: 60 },
+            "14": { nom: "Calvados", region: "Normandie", tarif: 60 },
+            "15": { nom: "Cantal", region: "Auvergne-Rhône-Alpes", tarif: 43 },
+            "16": { nom: "Charente", region: "Nouvelle-Aquitaine", tarif: 53 },
+            "17": { nom: "Charente-Maritime", region: "Nouvelle-Aquitaine", tarif: 53 },
+            "18": { nom: "Cher", region: "Centre-Val de Loire", tarif: 60 },
+            "19": { nom: "Corrèze", region: "Nouvelle-Aquitaine", tarif: 53 },
+            "21": { nom: "Côte-d'Or", region: "Bourgogne-Franche-Comté", tarif: 60 },
+            "22": { nom: "Côtes d'Armor", region: "Bretagne", tarif: 60 },
+            "23": { nom: "Creuse", region: "Nouvelle-Aquitaine", tarif: 53 },
+            "24": { nom: "Dordogne", region: "Nouvelle-Aquitaine", tarif: 53 },
+            "25": { nom: "Doubs", region: "Bourgogne-Franche-Comté", tarif: 60 },
+            "26": { nom: "Drôme", region: "Auvergne-Rhône-Alpes", tarif: 43 },
+            "27": { nom: "Eure", region: "Normandie", tarif: 60 },
+            "28": { nom: "Eure-et-Loir", region: "Centre-Val de Loire", tarif: 60 },
+            "29": { nom: "Finistère", region: "Bretagne", tarif: 60 },
+            "30": { nom: "Gard", region: "Occitanie", tarif: 54.50 },
+            "31": { nom: "Haute-Garonne", region: "Occitanie", tarif: 54.50 },
+            "32": { nom: "Gers", region: "Occitanie", tarif: 54.50 },
+            "33": { nom: "Gironde", region: "Nouvelle-Aquitaine", tarif: 53 },
+            "34": { nom: "Hérault", region: "Occitanie", tarif: 54.50 },
+            "35": { nom: "Ille-et-Vilaine", region: "Bretagne", tarif: 60 },
+            "36": { nom: "Indre", region: "Centre-Val de Loire", tarif: 60 },
+            "37": { nom: "Indre-et-Loire", region: "Centre-Val de Loire", tarif: 60 },
+            "38": { nom: "Isère", region: "Auvergne-Rhône-Alpes", tarif: 43 },
+            "39": { nom: "Jura", region: "Bourgogne-Franche-Comté", tarif: 60 },
+            "40": { nom: "Landes", region: "Nouvelle-Aquitaine", tarif: 53 },
+            "41": { nom: "Loir-et-Cher", region: "Centre-Val de Loire", tarif: 60 },
+            "42": { nom: "Loire", region: "Auvergne-Rhône-Alpes", tarif: 43 },
+            "43": { nom: "Haute-Loire", region: "Auvergne-Rhône-Alpes", tarif: 43 },
+            "44": { nom: "Loire-Atlantique", region: "Pays de la Loire", tarif: 51 },
+            "45": { nom: "Loiret", region: "Centre-Val de Loire", tarif: 60 },
+            "46": { nom: "Lot", region: "Occitanie", tarif: 54.50 },
+            "47": { nom: "Lot-et-Garonne", region: "Nouvelle-Aquitaine", tarif: 53 },
+            "48": { nom: "Lozère", region: "Occitanie", tarif: 54.50 },
+            "49": { nom: "Maine-et-Loire", region: "Pays de la Loire", tarif: 51 },
+            "50": { nom: "Manche", region: "Normandie", tarif: 60 },
+            "51": { nom: "Marne", region: "Grand Est", tarif: 60 },
+            "52": { nom: "Haute-Marne", region: "Grand Est", tarif: 60 },
+            "53": { nom: "Mayenne", region: "Pays de la Loire", tarif: 51 },
+            "54": { nom: "Meurthe-et-Moselle", region: "Grand Est", tarif: 60 },
+            "55": { nom: "Meuse", region: "Grand Est", tarif: 60 },
+            "56": { nom: "Morbihan", region: "Bretagne", tarif: 60 },
+            "57": { nom: "Moselle", region: "Grand Est", tarif: 60 },
+            "58": { nom: "Nièvre", region: "Bourgogne-Franche-Comté", tarif: 60 },
+            "59": { nom: "Nord", region: "Hauts-de-France", tarif: 55 },
+            "60": { nom: "Oise", region: "Hauts-de-France", tarif: 55 },
+            "61": { nom: "Orne", region: "Normandie", tarif: 60 },
+            "62": { nom: "Pas-de-Calais", region: "Hauts-de-France", tarif: 55 },
+            "63": { nom: "Puy-de-Dôme", region: "Auvergne-Rhône-Alpes", tarif: 43 },
+            "64": { nom: "Pyrénées-Atlantiques", region: "Nouvelle-Aquitaine", tarif: 53 },
+            "65": { nom: "Hautes-Pyrénées", region: "Occitanie", tarif: 54.50 },
+            "66": { nom: "Pyrénées-Orientales", region: "Occitanie", tarif: 54.50 },
+            "67": { nom: "Bas-Rhin", region: "Grand Est", tarif: 60 },
+            "68": { nom: "Haut-Rhin", region: "Grand Est", tarif: 60 },
+            "69": { nom: "Rhône", region: "Auvergne-Rhône-Alpes", tarif: 43 },
+            "70": { nom: "Haute-Saône", region: "Bourgogne-Franche-Comté", tarif: 60 },
+            "71": { nom: "Saône-et-Loire", region: "Bourgogne-Franche-Comté", tarif: 60 },
+            "72": { nom: "Sarthe", region: "Pays de la Loire", tarif: 51 },
+            "73": { nom: "Savoie", region: "Auvergne-Rhône-Alpes", tarif: 43 },
+            "74": { nom: "Haute-Savoie", region: "Auvergne-Rhône-Alpes", tarif: 43 },
+            "75": { nom: "Paris", region: "Île-de-France", tarif: 54 },
+            "76": { nom: "Seine-Maritime", region: "Normandie", tarif: 60 },
+            "77": { nom: "Seine-et-Marne", region: "Île-de-France", tarif: 54 },
+            "78": { nom: "Yvelines", region: "Île-de-France", tarif: 54 },
+            "79": { nom: "Deux-Sèvres", region: "Nouvelle-Aquitaine", tarif: 53 },
+            "80": { nom: "Somme", region: "Hauts-de-France", tarif: 55 },
+            "81": { nom: "Tarn", region: "Occitanie", tarif: 54.50 },
+            "82": { nom: "Tarn-et-Garonne", region: "Occitanie", tarif: 54.50 },
+            "83": { nom: "Var", region: "Provence-Alpes-Côte d'Azur", tarif: 60 },
+            "84": { nom: "Vaucluse", region: "Provence-Alpes-Côte d'Azur", tarif: 60 },
+            "85": { nom: "Vendée", region: "Pays de la Loire", tarif: 51 },
+            "86": { nom: "Vienne", region: "Nouvelle-Aquitaine", tarif: 53 },
+            "87": { nom: "Haute-Vienne", region: "Nouvelle-Aquitaine", tarif: 53 },
+            "88": { nom: "Vosges", region: "Grand Est", tarif: 60 },
+            "89": { nom: "Yonne", region: "Bourgogne-Franche-Comté", tarif: 60 },
+            "90": { nom: "Territoire de Belfort", region: "Bourgogne-Franche-Comté", tarif: 60 },
+            "91": { nom: "Essonne", region: "Île-de-France", tarif: 54 },
+            "92": { nom: "Hauts-de-Seine", region: "Île-de-France", tarif: 54 },
+            "93": { nom: "Seine-Saint-Denis", region: "Île-de-France", tarif: 54 },
+            "94": { nom: "Val-de-Marne", region: "Île-de-France", tarif: 54 },
+            "95": { nom: "Val-d'Oise", region: "Île-de-France", tarif: 54 },
+            "2A": { nom: "Corse-du-Sud", region: "Corse", tarif: 53 },
+            "2B": { nom: "Haute-Corse", region: "Corse", tarif: 53 },
+            "971": { nom: "Guadeloupe", region: "Outre-mer", tarif: 42.50 },
+            "972": { nom: "Martinique", region: "Outre-mer", tarif: 30 },
+            "973": { nom: "Guyane", region: "Outre-mer", tarif: 42.50 },
+            "974": { nom: "La Réunion", region: "Outre-mer", tarif: 60 },
+            "976": { nom: "Mayotte", region: "Outre-mer", tarif: 30 }
+        };
+
+        // Remplir le select des départements
+        const selectDept = document.getElementById('departement');
+        Object.entries(tarifsCV).forEach(([code, info]) => {
+            const option = document.createElement('option');
+            option.value = code;
+            option.textContent = `${code} - ${info.nom}`;
+            selectDept.appendChild(option);
+        });
+
+        // Gestion des étapes
+        let currentStep = 1;
+
+        function showStep(step) {
+            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`step${step}`).classList.remove('hidden');
+            
+            document.getElementById('btnPrevious').classList.toggle('hidden', step === 1);
+            document.getElementById('btnNext').classList.toggle('hidden', step === 3);
+            document.getElementById('btnCalculate').classList.toggle('hidden', step !== 3);
+            
+            currentStep = step;
+        }
+
+        document.getElementById('btnNext').addEventListener('click', () => {
+            if (currentStep < 3) {
+                showStep(currentStep + 1);
+                window.scrollTo(0, 0);
+            }
+        });
+
+        document.getElementById('btnPrevious').addEventListener('click', () => {
+            if (currentStep > 1) {
+                showStep(currentStep - 1);
+                window.scrollTo(0, 0);
+            }
+        });
+
+        // Gestion de la démarche
+        document.getElementById('demarche').addEventListener('change', function() {
+            const typeVehiculeNeuf = document.getElementById('typeVehiculeNeuf');
+            if (this.value === 'premiere') {
+                typeVehiculeNeuf.classList.remove('hidden');
+            } else {
+                typeVehiculeNeuf.classList.add('hidden');
+            }
+        });
+
+        // Gestion département avec info région
+        document.getElementById('departement').addEventListener('change', function() {
+            const infoRegion = document.getElementById('infoRegion');
+            if (this.value) {
+                const dept = tarifsCV[this.value];
+                infoRegion.innerHTML = `<strong>Région :</strong> ${dept.region}<br><strong>Tarif du cheval fiscal :</strong> ${dept.tarif} €`;
+                infoRegion.classList.remove('hidden');
+            }
+        });
+
+        // Styliser les radio buttons
+        document.querySelectorAll('.radio-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+                
+                this.closest('.radio-group').querySelectorAll('.radio-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+
+        // Calcul malus CO2
+        function calculerMalusCO2(co2) {
+            if (co2 < 113) return 0;
+            const bareme = {
+                113: 50, 114: 75, 115: 100, 116: 125, 117: 150, 118: 170, 119: 190, 120: 210,
+                121: 230, 122: 240, 123: 260, 124: 280, 125: 310, 126: 330, 127: 360, 128: 400,
+                129: 450, 130: 540, 131: 650, 132: 740, 133: 818, 134: 898, 135: 983, 136: 1074,
+                137: 1172, 138: 1276, 139: 1386, 140: 1504, 141: 1629, 142: 1761, 143: 1901,
+                144: 2049, 145: 2205, 146: 2370, 147: 2544, 148: 2726, 149: 2918, 150: 3119
+            };
+            
+            if (bareme[co2]) return bareme[co2];
+            if (co2 >= 151 && co2 <= 170) return 3119 + (co2 - 150) * 210;
+            if (co2 >= 171 && co2 <= 192) return 7319 + (co2 - 170) * 220;
+            if (co2 >= 193) return 70000;
+            return 0;
+        }
+
+        // Calcul malus poids
+        function calculerMalusPoids(poids, energie, dateCirculation, invalidite) {
+            if (invalidite === 'oui') return 0;
+            if (energie === 'EL') return 0;
+            
+            const seuil = 1600;
+            if (poids <= seuil) return 0;
+            
+            let malus = 0;
+            let restant = poids - seuil;
+            
+            if (restant > 0) {
+                const tranche1 = Math.min(restant, 199);
+                malus += tranche1 * 10;
+                restant -= tranche1;
+            }
+            
+            if (restant > 0) {
+                const tranche2 = Math.min(restant, 100);
+                malus += tranche2 * 15;
+                restant -= tranche2;
+            }
+            
+            if (restant > 0) {
+                const tranche3 = Math.min(restant, 100);
+                malus += tranche3 * 20;
+                restant -= tranche3;
+            }
+            
+            if (restant > 0) {
+                const tranche4 = Math.min(restant, 100);
+                malus += tranche4 * 25;
+                restant -= tranche4;
+            }
+            
+            if (restant > 0) {
+                malus += restant * 30;
+            }
+            
+            // Décote pour ancienneté
+            const dateImmat = new Date(dateCirculation);
+            const maintenant = new Date();
+            const anneesDepuisImmat = maintenant.getFullYear() - dateImmat.getFullYear();
+            const pourcentageDecote = Math.min(anneesDepuisImmat * 10, 100);
+            const decote = malus * (pourcentageDecote / 100);
+            
+            return Math.round(malus - decote);
+        }
+
+        // Soumission du formulaire
+        document.getElementById('simulatorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const dept = document.getElementById('departement').value;
+            const puissance = parseInt(document.getElementById('puissance').value);
+            const dateCirculation = document.getElementById('dateCirculation').value;
+            const co2 = parseInt(document.getElementById('co2').value);
+            const poids = parseInt(document.getElementById('poids').value);
+            const energie = document.getElementById('energie').value;
+            const invalidite = document.querySelector('input[name="invalidite"]:checked').value;
+            const demarche = document.getElementById('demarche').value;
+            
+            // Calculs
+            const tarifCV = tarifsCV[dept].tarif;
+            const taxeRegionale = puissance * tarifCV;
+            const malusCO2 = invalidite === 'oui' ? 0 : calculerMalusCO2(co2);
+            const malusPoids = calculerMalusPoids(poids, energie, dateCirculation, invalidite);
+            const taxeFixe = 11;
+            const redevance = 2.76;
+            
+            const sousTotal = Math.round(taxeRegionale + malusCO2 + malusPoids + taxeFixe);
+            const total = sousTotal + redevance;
+            
+            // Affichage
+            const resultContent = document.getElementById('resultContent');
+            
+            let demarcheText = '';
+            switch(demarche) {
+                case 'premiere':
+                    demarcheText = 'Vous souhaitez immatriculer pour la première fois en France un véhicule.';
+                    break;
+                case 'occasion':
+                    demarcheText = 'Vous souhaitez immatriculer un véhicule d\'occasion.';
+                    break;
+                case 'adresse':
+                    demarcheText = 'Vous souhaitez effectuer un changement d\'adresse sur votre carte grise.';
+                    break;
+            }
+            
+            resultContent.innerHTML = `
+                <p style="margin-bottom: 20px;">${demarcheText}</p>
+                
+                <div style="background: white; padding: 20px; border-radius: 4px; margin-bottom: 20px;">
+                    <div style="margin-bottom: 15px;">
+                        <strong>Département :</strong> ${dept} - ${tarifsCV[dept].nom} (${tarifsCV[dept].region})
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <strong>Véhicule :</strong> ${puissance} CV - ${co2} g/km CO₂ - ${poids} kg
+                    </div>
+                </div>
+                
+                <div class="result-detail">
+                    <span class="result-label">Y1 - Taxe régionale (${puissance} CV × ${tarifCV} €)</span>
+                    <span class="result-value">${taxeRegionale.toFixed(2)} €</span>
+                </div>
+                
+                <div class="result-detail">
+                    <span class="result-label">Y3 - Malus CO₂</span>
+                    <span class="result-value">${malusCO2.toFixed(2)} €</span>
+                </div>
+                
+                <div class="result-detail">
+                    <span class="result-label">Y3 - TMOM (Taxe au poids)</span>
+                    <span class="result-value">${malusPoids.toFixed(2)} €</span>
+                </div>
+                
+                <div class="result-detail">
+                    <span class="result-label">Y4 - Taxe fixe</span>
+                    <span class="result-value">${taxeFixe.toFixed(2)} €</span>
+                </div>
+                
+                <div class="result-detail">
+                    <span class="result-label">Sous-total arrondi</span>
+                    <span class="result-value">${sousTotal.toFixed(2)} €</span>
+                </div>
+                
+                <div class="result-detail">
+                    <span class="result-label">Y5 - Redevance d'acheminement</span>
+                    <span class="result-value">${redevance.toFixed(2)} €</span>
+                </div>
+                
+                <div class="result-total">
+                    <span>Y6 - Taxes à payer</span>
+                    <strong>${total.toFixed(2)} €</strong>
+                </div>
+            `;
+            
+            document.getElementById('results').classList.remove('hidden');
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Initialiser
+        showStep(1);
+    </script>
+</body>
+</html>
